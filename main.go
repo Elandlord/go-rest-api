@@ -116,8 +116,11 @@ func deleteArticle(writer http.ResponseWriter, request *http.Request) {
 }
 
 func homePage(writer http.ResponseWriter, request *http.Request) {
-	fmt.Fprintf(writer, "Welcome to the HomePage!")
 	fmt.Println("Endpoint Hit: homePage")
+
+	writer.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	fmt.Fprint(writer, "<h1> Dit is een test! <h1>")
 }
 
 func loadEnv() {
