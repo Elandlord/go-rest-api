@@ -7,12 +7,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
+	"mentechmedia.nl/config"
 )
 
 type Article struct {
@@ -24,16 +23,12 @@ type Article struct {
 
 var Articles []Article
 
-var dbHost string
-var dbPort string
-var dbName string
-var dbUsername string
-var dbPassword string
-
 func allArticles(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("Endpoint Hit: All Articles Endpoint")
 
-	dbConnection := dbConnect()
+	// TODO: Replace with an app structure that holds the DB connection
+	config := config.GetConfig()
+	dbConnection := dbConnect(config)
 
 	articles, err := dbConnection.Query("SELECT * FROM articles")
 
@@ -123,22 +118,8 @@ func homePage(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprint(writer, "<h1> Dit is een test! <h1>")
 }
 
-func loadEnv() {
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	dbHost = os.Getenv("DB_HOST")
-	dbPort = os.Getenv("DB_PORT")
-	dbName = os.Getenv("DB_DATABASE")
-	dbUsername = os.Getenv("DB_USERNAME")
-	dbPassword = os.Getenv("DB_PASSWORD")
-}
-
-func dbConnect() *sql.DB {
-	dbConnection, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", dbUsername, dbPassword, dbName))
+func dbConnect(config *config.Config) *sql.DB {
+	dbConnection, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", config.DB.Username, config.DB.Password, config.DB.Name))
 
 	if err != nil {
 		panic(err)
@@ -170,8 +151,9 @@ func registerRoutes(router *mux.Router) {
 func main() {
 	fmt.Println("Rest API v2.0 - Mux Routers")
 
-	loadEnv()
-	dbConnect()
+	config := config.GetConfig()
+
+	dbConnect(config)
 
 	handleRequests()
 }
