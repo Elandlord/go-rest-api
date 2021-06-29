@@ -1,8 +1,11 @@
 package config
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -45,4 +48,17 @@ func GetConfig() *Config {
 			Charset:    "utf8",
 		},
 	}
+}
+
+func DbConnect(config *Config) *sql.DB {
+	dbConnection, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", config.DB.Username, config.DB.Password, config.DB.Name))
+
+	if err != nil {
+		panic(err)
+	}
+
+	dbConnection.SetConnMaxLifetime(time.Minute * 3)
+	dbConnection.SetMaxOpenConns(10)
+	dbConnection.SetMaxIdleConns(10)
+	return dbConnection
 }
