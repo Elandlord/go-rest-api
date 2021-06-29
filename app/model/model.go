@@ -1,9 +1,5 @@
 package model
 
-import (
-	_ "github.com/go-sql-driver/mysql"
-)
-
 type Article struct {
 	Id          string `json:"Id"`
 	Title       string `json:"Title"`

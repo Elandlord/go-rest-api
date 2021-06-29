@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 )
 
