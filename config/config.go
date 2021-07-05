@@ -52,7 +52,7 @@ func GetConfig() *Config {
 }
 
 func DbConnect(config *Config) *sql.DB {
-	dbConnection, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", config.DB.Username, config.DB.Password, config.DB.Name))
+	dbConnection, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(goDockerDB)/%s", config.DB.Username, config.DB.Password, config.DB.Name))
 
 	if err != nil {
 		panic(err)

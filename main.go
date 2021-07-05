@@ -15,9 +15,9 @@ import (
 // }
 
 func main() {
-	fmt.Println("Rest API v2.0 - Mux Routers")
+	fmt.Println("Rest API v2.0 - Mux Routers with Docker")
 
 	app := &app.App{}
 	app.Initialize()
-	app.Run(":10000")
+	app.Run(":8081")
 }
