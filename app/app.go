@@ -35,11 +35,11 @@ func homePage(writer http.ResponseWriter, request *http.Request) {
 
 func (app *App) registerRoutes() {
 	app.Get("/", homePage)
-	app.Get("/articles", handler.AllArticles)
-	app.Post("/article", handler.StoreArticle)
-	app.Put("/articles/{id}", handler.UpdateArticle)
-	app.Delete("/articles/{id}", handler.DeleteArticle)
-	app.Get("/articles/{id}", handler.FindArticle)
+	app.Get("/articles", app.handleRequest(handler.AllArticles))
+	app.Post("/article", app.handleRequest(handler.StoreArticle))
+	app.Put("/articles/{id}", app.handleRequest(handler.UpdateArticle))
+	app.Delete("/articles/{id}", app.handleRequest(handler.DeleteArticle))
+	app.Get("/articles/{id}", app.handleRequest(handler.FindArticle))
 }
 
 // Get wraps the router for GET method
