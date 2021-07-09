@@ -7,6 +7,10 @@
 - Add authorization?
 - ~~Refactor Article to separate file / module?~~
 
+## Steps
+
+- Make sure you have Docker installed, and run `docker-compose up`.
+
 ## Migrations
 Replace with DB driver of choice
 Replace migration directory with own absolute local URL
