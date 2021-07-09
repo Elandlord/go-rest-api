@@ -3,7 +3,6 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -21,8 +20,6 @@ func (error *articleNotFoundError) Error() string {
 }
 
 func AllArticles(db *sql.DB, writer http.ResponseWriter, request *http.Request) {
-	fmt.Println("Endpoint Hit: All Articles Endpoint")
-
 	articles := getAllArticles(db)
 
 	respondJSON(writer, http.StatusOK, articles)
@@ -46,8 +43,6 @@ func StoreArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request)
 }
 
 func FindArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request) {
-	fmt.Println("Endpoint Hit: Find Article Endpoint")
-
 	vars := mux.Vars(request)
 	key := vars["id"]
 
@@ -103,12 +98,12 @@ func DeleteArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request
 	articleToDelete, err := getArticleOr404(db, id, writer, request)
 
 	if err != nil {
-		respondJSON(writer, http.StatusNotFound, err)
+		respondError(writer, http.StatusNotFound, err.Error())
+		return
 	}
 
-	fmt.Print(articleToDelete)
-
-	// TODO: set new values in DB
+	sqlStatement := "DELETE FROM articles WHERE Id = ?"
+	_, err = db.Exec(sqlStatement, articleToDelete.Id)
 }
 
 func getAllArticles(db *sql.DB) []model.Article {
