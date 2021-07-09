@@ -36,7 +36,7 @@ func homePage(writer http.ResponseWriter, request *http.Request) {
 func (app *App) registerRoutes() {
 	app.Get("/", homePage)
 	app.Get("/articles", app.handleRequest(handler.AllArticles))
-	app.Post("/article", app.handleRequest(handler.StoreArticle))
+	app.Post("/articles", app.handleRequest(handler.StoreArticle))
 	app.Put("/articles/{id}", app.handleRequest(handler.UpdateArticle))
 	app.Delete("/articles/{id}", app.handleRequest(handler.DeleteArticle))
 	app.Get("/articles/{id}", app.handleRequest(handler.FindArticle))

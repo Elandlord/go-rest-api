@@ -6,5 +6,3 @@ type Article struct {
 	Description string `json:"Description"`
 	Content     string `json:"Content"`
 }
-
-var Articles []Article
