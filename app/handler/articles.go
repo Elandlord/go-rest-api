@@ -77,16 +77,23 @@ func UpdateArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request
 	articleToUpdate, err := getArticleOr404(db, id, writer, request)
 
 	if err != nil {
-		respondJSON(writer, http.StatusNotFound, err)
+		respondError(writer, http.StatusNotFound, err.Error())
+		return
 	}
 
 	articleToUpdate.Title = updatedArticle.Title
 	articleToUpdate.Description = updatedArticle.Description
 	articleToUpdate.Content = updatedArticle.Content
 
-	// TODO: set new values in DB
+	sqlStatement := "UPDATE articles SET Content = ?, Description = ?, Title = ? WHERE Id = ?"
+	_, err = db.Exec(sqlStatement, articleToUpdate.Content, articleToUpdate.Description, articleToUpdate.Title, articleToUpdate.Id)
 
-	json.NewEncoder(writer).Encode(articleToUpdate)
+	if err != nil {
+		respondError(writer, http.StatusNotFound, err.Error())
+		return
+	}
+
+	json.NewEncoder(writer).Encode(updatedArticle)
 }
 
 func DeleteArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request) {
