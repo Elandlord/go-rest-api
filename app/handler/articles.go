@@ -35,10 +35,11 @@ func StoreArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request)
 	json.Unmarshal(requestBody, &article)
 
 	sqlStatement := "INSERT INTO articles (Content, Description, Title) VALUES (?, ?, ?)"
-	_, err := db.Exec(sqlStatement, "Eric Landheer", "Has created a functioning API in Go", "But improvements have to be made")
+	_, err := db.Exec(sqlStatement, article.Content, article.Description, article.Title)
 
 	if err != nil {
-		log.Fatal(err)
+		respondError(writer, http.StatusNotFound, err.Error())
+		return
 	}
 
 	respondJSON(writer, http.StatusCreated, article)
