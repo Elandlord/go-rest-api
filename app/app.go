@@ -2,14 +2,37 @@ package app
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
-	"mentechmedia.nl/config"
-	"mentechmedia.nl/handler"
+	"mentechmedia.nl/rest-api/app/handler"
+	"mentechmedia.nl/rest-api/auth"
+	"mentechmedia.nl/rest-api/config"
 )
+
+var mySigningKey = []byte("ericgorestapi")
+
+func JwtVerify(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var header = r.Header.Get("x-access-token")
+
+		json.NewEncoder(w).Encode(r)
+		header = strings.TrimSpace(header)
+
+		if header == "" {
+			w.WriteHeader(http.StatusForbidden)
+			json.NewEncoder(w).Encode("Missing auth token")
+			return
+		} else {
+			json.NewEncoder(w).Encode(fmt.Sprintf("Token found. Value %s", header))
+		}
+		next.ServeHTTP(w, r)
+	})
+}
 
 // App has router and db instances
 type App struct {
@@ -21,7 +44,13 @@ func (app *App) Initialize() {
 
 	configFile := config.GetConfig()
 	app.DB = config.DbConnect(configFile)
-	app.Router = mux.NewRouter().StrictSlash(true)
+	router := mux.NewRouter().StrictSlash(true)
+
+	app.Router = router
+	// Register middleware on every request
+	secure := router.PathPrefix("/auth").Subrouter()
+	secure.Use(auth.JwtVerify)
+
 	app.registerRoutes()
 }
 

@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"mentechmedia.nl/model"
+	"mentechmedia.nl/rest-api/app/model"
 )
 
 type articleNotFoundError struct {

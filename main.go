@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"mentechmedia.nl/app"
+	"mentechmedia.nl/rest-api/app"
 )
 
 func main() {
