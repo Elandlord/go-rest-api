@@ -14,8 +14,6 @@ import (
 	"mentechmedia.nl/rest-api/config"
 )
 
-var mySigningKey = []byte("ericgorestapi")
-
 func JwtVerify(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var header = r.Header.Get("x-access-token")
