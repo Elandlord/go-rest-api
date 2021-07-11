@@ -2,35 +2,15 @@ package app
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"mentechmedia.nl/rest-api/app/handler"
 	"mentechmedia.nl/rest-api/auth"
 	"mentechmedia.nl/rest-api/config"
 )
-
-func JwtVerify(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var header = r.Header.Get("x-access-token")
-
-		json.NewEncoder(w).Encode(r)
-		header = strings.TrimSpace(header)
-
-		if header == "" {
-			w.WriteHeader(http.StatusForbidden)
-			json.NewEncoder(w).Encode("Missing auth token")
-			return
-		} else {
-			json.NewEncoder(w).Encode(fmt.Sprintf("Token found. Value %s", header))
-		}
-		next.ServeHTTP(w, r)
-	})
-}
 
 // App has router and db instances
 type App struct {
