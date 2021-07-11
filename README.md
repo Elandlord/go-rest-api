@@ -2,10 +2,11 @@
 
 - ~~Create an "updateArticle" route, parse HTTP request body + find Article in array and update the entry~~
 - ~~Connect to MySQL DB~~
-- ~~Prevent race conditions using Mutex: https://tutorialedge.net/golang/go-mutex-tutorial/~~ **Not necessary, the RDBMS should handle this.** 
-- Add tests
-- Add authorization?
 - ~~Refactor Article to separate file / module?~~
+- ~~Prevent race conditions using Mutex: https://tutorialedge.net/golang/go-mutex-tutorial/~~ **Not necessary, the RDBMS should handle this.** 
+- Add authorization - _Active, using JWT_
+- Add tests
+
 
 ## Steps
 
