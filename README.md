@@ -4,7 +4,7 @@
 - ~~Connect to MySQL DB~~
 - ~~Refactor Article to separate file / module?~~
 - ~~Prevent race conditions using Mutex: https://tutorialedge.net/golang/go-mutex-tutorial/~~ **Not necessary, the RDBMS should handle this.** 
-- Add authorization - _Active, using JWT_
+- ~~Add authorization - _Active, using JWT_~~
 - Add tests
 
 
