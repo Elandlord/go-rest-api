@@ -25,28 +25,43 @@ func (app *App) Initialize() {
 	router := mux.NewRouter().StrictSlash(true)
 
 	app.Router = router
-	// Register middleware on every request
-	secure := router.PathPrefix("/auth").Subrouter()
-	secure.Use(auth.JwtVerify)
-
 	app.registerRoutes()
 }
 
 func homePage(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("Endpoint Hit: homePage")
 
-	writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	fmt.Fprint(writer, "<h1> Dit is een test! <h1>")
+	http.ServeFile(writer, request, request.URL.Path+"go/rest-api/static/index.html")
 }
 
 func (app *App) registerRoutes() {
 	app.Get("/", homePage)
-	app.Get("/articles", app.handleRequest(handler.AllArticles))
-	app.Post("/articles", app.handleRequest(handler.StoreArticle))
-	app.Put("/articles/{id}", app.handleRequest(handler.UpdateArticle))
-	app.Delete("/articles/{id}", app.handleRequest(handler.DeleteArticle))
-	app.Get("/articles/{id}", app.handleRequest(handler.FindArticle))
+	app.Post("/authenticate", auth.Authenticate)
+	app.GetWithMiddleware("/articles", app.handleRequest(handler.AllArticles))
+	app.PostWithMiddleware("/articles", app.handleRequest(handler.StoreArticle))
+	app.PutWithMiddleware("/articles/{id}", app.handleRequest(handler.UpdateArticle))
+	app.DeleteWithMiddleware("/articles/{id}", app.handleRequest(handler.DeleteArticle))
+	app.GetWithMiddleware("/articles/{id}", app.handleRequest(handler.FindArticle))
+}
+
+// Get wraps the router for GET method, add AuthMiddleware
+func (app *App) GetWithMiddleware(path string, f http.HandlerFunc) {
+	app.Router.Handle(path, auth.AuthMiddleware(f)).Methods("GET")
+}
+
+// Get wraps the router for POST method, add AuthMiddleware
+func (app *App) PostWithMiddleware(path string, f http.HandlerFunc) {
+	app.Router.Handle(path, auth.AuthMiddleware(f)).Methods("POST")
+}
+
+// Put wraps the router for PUT method, add AuthMiddleware
+func (app *App) PutWithMiddleware(path string, f http.HandlerFunc) {
+	app.Router.Handle(path, auth.AuthMiddleware(f)).Methods("PUT")
+}
+
+// Delete wraps the router for DELETE method, add AuthMiddleware
+func (app *App) DeleteWithMiddleware(path string, f http.HandlerFunc) {
+	app.Router.Handle(path, auth.AuthMiddleware(f)).Methods("DELETE")
 }
 
 // Get wraps the router for GET method
