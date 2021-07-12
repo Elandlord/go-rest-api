@@ -5,7 +5,7 @@
 - ~~Refactor Article to separate file / module?~~
 - ~~Prevent race conditions using Mutex: https://tutorialedge.net/golang/go-mutex-tutorial/~~ **Not necessary, the RDBMS should handle this.** 
 - ~~Add JWT authorization
-- Add tests - _Active_
+- ~~Add tests - _Active_~~
 - Replace hard coded login credentials with table credentials
 - Deploy using Docker (Kubernetes)
 
