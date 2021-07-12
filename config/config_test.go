@@ -1,13 +1,11 @@
-package main
+package config
 
 import (
 	"testing"
-
-	"mentechmedia.nl/rest-api/config"
 )
 
 func TestConfigSetup(t *testing.T) {
-	config := config.GetConfig()
+	config := GetConfig()
 
 	if config.DB.Connection == "" {
 		t.Fatalf("Config DB Connection not properly set.")

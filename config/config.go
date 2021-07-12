@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -25,12 +26,22 @@ type DBConfig struct {
 	Charset    string
 }
 
-func GetConfig() *Config {
-	err := godotenv.Load(".env")
+const projectDirName = "rest-api"
+
+func loadEnv() {
+	projectName := regexp.MustCompile(`^(.*` + projectDirName + `)`)
+	currentWorkDirectory, _ := os.Getwd()
+	rootPath := projectName.Find([]byte(currentWorkDirectory))
+
+	err := godotenv.Load(string(rootPath) + `/.env`)
 
 	if err != nil {
 		log.Fatalf("Error loading .env file")
 	}
+}
+
+func GetConfig() *Config {
+	loadEnv()
 
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
