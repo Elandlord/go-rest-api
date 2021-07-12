@@ -12,7 +12,13 @@
 
 ## Steps
 
+- Checkout project `git clone https://github.com/Elandlord/go-rest-api.git`
+- Run `cp .env.example .env` and set correct credentials in the `.env`
 - Make sure you have Docker installed, and run `docker-compose up`.
+
+## Testing
+- Run `go test` to run the tests (only in root directory)
+- Run `go test ./...` to run all tests (including subdirectories)
 
 ## Migrations
 Replace with DB driver of choice
