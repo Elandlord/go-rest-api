@@ -6,6 +6,8 @@
 - ~~Prevent race conditions using Mutex: https://tutorialedge.net/golang/go-mutex-tutorial/~~ **Not necessary, the RDBMS should handle this.** 
 - ~~Add authorization - _Active, using JWT_~~
 - Add tests
+- Replace hard coded login credentials with table credentials
+- Deploy using Docker (Kubernetes)
 
 
 ## Steps
