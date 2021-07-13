@@ -1,3 +1,5 @@
+[![Go](https://github.com/Elandlord/go-rest-api/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/Elandlord/go-rest-api/actions/workflows/go.yml)
+
 # Challenges
 
 - ~~Create an "updateArticle" route, parse HTTP request body + find Article in array and update the entry~~
