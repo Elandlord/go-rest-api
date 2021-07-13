@@ -5,16 +5,16 @@ import (
 	"strings"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"mentechmedia.nl/rest-api/app/handler"
 )
 
-func Authenticate(w http.ResponseWriter, r *http.Request) {
+func Authenticate(writer http.ResponseWriter, request *http.Request) {
 
-	name := r.FormValue("application_name")
-	password := r.FormValue("password")
+	name := request.FormValue("application_name")
+	password := request.FormValue("password")
 
 	if len(name) == 0 || len(password) == 0 {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Please provide name and password to obtain the token"))
+		handler.RespondError(writer, http.StatusBadRequest, "Please provide name and password to obtain the token")
 		return
 	}
 
@@ -23,29 +23,28 @@ func Authenticate(w http.ResponseWriter, r *http.Request) {
 		token, err := getToken(name)
 
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Error generating JWT token: " + err.Error()))
-		} else {
-			w.Header().Set("Authorization", "Bearer "+token)
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("Token: " + token))
+			handler.RespondError(writer, http.StatusNotFound, err.Error())
+			return
 		}
 
+		writer.Header().Set("Authorization", "Bearer "+token)
+		writer.WriteHeader(http.StatusOK)
+		writer.Write([]byte("Token: " + token))
+
 	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Name and password do not match"))
+		handler.RespondError(writer, http.StatusUnauthorized, "Name and password do not match")
 		return
 	}
 }
 
 func AuthMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(writer http.ResponseWriter, response *http.Request) {
 
-		tokenString := r.Header.Get("Authorization")
+		tokenString := response.Header.Get("Authorization")
 
 		if len(tokenString) == 0 {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Missing Authorization Header"))
+			writer.WriteHeader(http.StatusUnauthorized)
+			writer.Write([]byte("Missing Authorization Header"))
 			return
 		}
 
@@ -53,17 +52,17 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		claims, err := verifyToken(tokenString)
 
 		if err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Error verifying JWT token: " + err.Error()))
+			writer.WriteHeader(http.StatusUnauthorized)
+			writer.Write([]byte("Error verifying JWT token: " + err.Error()))
 			return
 		}
 
 		name := claims.(jwt.MapClaims)["name"].(string)
 		role := claims.(jwt.MapClaims)["role"].(string)
 
-		r.Header.Set("name", name)
-		r.Header.Set("role", role)
+		response.Header.Set("name", name)
+		response.Header.Set("role", role)
 
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(writer, response)
 	})
 }

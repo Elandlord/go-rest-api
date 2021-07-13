@@ -22,7 +22,7 @@ func (error *articleNotFoundError) Error() string {
 func AllArticles(db *sql.DB, writer http.ResponseWriter, request *http.Request) {
 	articles := getAllArticles(db)
 
-	respondJSON(writer, http.StatusOK, articles)
+	RespondJSON(writer, http.StatusOK, articles)
 }
 
 func StoreArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request) {
@@ -35,11 +35,11 @@ func StoreArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request)
 	_, err := db.Exec(sqlStatement, article.Content, article.Description, article.Title)
 
 	if err != nil {
-		respondError(writer, http.StatusNotFound, err.Error())
+		RespondError(writer, http.StatusNotFound, err.Error())
 		return
 	}
 
-	respondJSON(writer, http.StatusCreated, article)
+	RespondJSON(writer, http.StatusCreated, article)
 }
 
 func FindArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request) {
@@ -49,16 +49,16 @@ func FindArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request) 
 	article, err := getArticleOr404(db, key, writer, request)
 
 	if err != nil {
-		respondError(writer, http.StatusNotFound, err.Error())
+		RespondError(writer, http.StatusNotFound, err.Error())
 		return
 	}
 
 	if article == nil {
-		respondError(writer, http.StatusNotFound, err.Error())
+		RespondError(writer, http.StatusNotFound, err.Error())
 		return
 	}
 
-	respondJSON(writer, http.StatusOK, article)
+	RespondJSON(writer, http.StatusOK, article)
 }
 
 func UpdateArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request) {
@@ -72,7 +72,7 @@ func UpdateArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request
 	articleToUpdate, err := getArticleOr404(db, id, writer, request)
 
 	if err != nil {
-		respondError(writer, http.StatusNotFound, err.Error())
+		RespondError(writer, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -84,7 +84,7 @@ func UpdateArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request
 	_, err = db.Exec(sqlStatement, articleToUpdate.Content, articleToUpdate.Description, articleToUpdate.Title, articleToUpdate.Id)
 
 	if err != nil {
-		respondError(writer, http.StatusNotFound, err.Error())
+		RespondError(writer, http.StatusNotFound, err.Error())
 		return
 	}
 
@@ -98,7 +98,7 @@ func DeleteArticle(db *sql.DB, writer http.ResponseWriter, request *http.Request
 	articleToDelete, err := getArticleOr404(db, id, writer, request)
 
 	if err != nil {
-		respondError(writer, http.StatusNotFound, err.Error())
+		RespondError(writer, http.StatusNotFound, err.Error())
 		return
 	}
 
