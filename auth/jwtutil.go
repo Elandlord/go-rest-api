@@ -6,7 +6,7 @@ func getToken(name string) (string, error) {
 	signingKey := []byte("keymaker")
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"name": name,
-		"role": "redpill",
+		"role": "admin",
 	})
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err

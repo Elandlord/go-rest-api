@@ -40,6 +40,18 @@ func loadEnv() {
 	}
 }
 
+func loadTestingEnv() {
+	projectName := regexp.MustCompile(`^(.*` + projectDirName + `)`)
+	currentWorkDirectory, _ := os.Getwd()
+	rootPath := projectName.Find([]byte(currentWorkDirectory))
+
+	err := godotenv.Load(string(rootPath) + `/.env.testing`)
+
+	if err != nil {
+		log.Fatalf("Error loading .env.testing file")
+	}
+}
+
 func GetConfig() *Config {
 	loadEnv()
 
@@ -62,8 +74,30 @@ func GetConfig() *Config {
 	}
 }
 
+func GetTestingConfig() *Config {
+	loadTestingEnv()
+
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_DATABASE")
+	dbUsername := os.Getenv("DB_USERNAME")
+	dbPassword := os.Getenv("DB_PASSWORD")
+
+	return &Config{
+		DB: &DBConfig{
+			Connection: "mysql",
+			Host:       dbHost,
+			Port:       dbPort,
+			Username:   dbUsername,
+			Password:   dbPassword,
+			Name:       dbName,
+			Charset:    "utf8",
+		},
+	}
+}
+
 func DbConnect(config *Config) *sql.DB {
-	dbConnection, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(goDockerDB)/%s", config.DB.Username, config.DB.Password, config.DB.Name))
+	dbConnection, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", config.DB.Username, config.DB.Password, config.DB.Host, config.DB.Name))
 
 	if err != nil {
 		panic(err)
