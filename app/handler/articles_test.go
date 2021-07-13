@@ -13,9 +13,9 @@ func TestAllArticlesWithoutToken(t *testing.T) {
 	db := config.DbConnect(configFile)
 
 	writer := httptest.NewRecorder()
-
 	request := httptest.NewRequest("GET", "/articles", nil)
 
+	// TODO: How to check with middleware?
 	AllArticles(db, writer, request)
 
 	if writer.Code != http.StatusOK {
